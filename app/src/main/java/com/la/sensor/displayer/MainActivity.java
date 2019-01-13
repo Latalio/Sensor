@@ -1,6 +1,12 @@
 package com.la.sensor.displayer;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +16,7 @@ import android.widget.TextView;
 import com.la.sensor.R;
 import com.la.sensor.communicator.util.LogString;
 import com.la.sensor.communicator.Communicator;
+import com.la.sensor.flashlight.FlashLight;
 import com.la.sensor.obtainer.Obtainer;
 
 
@@ -18,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static DisplayHandler infoHandler;
     public static DisplayHandler stateHandler;
+
+    private CameraManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +50,42 @@ public class MainActivity extends AppCompatActivity {
 
         //Start sensor info update thread
 
-        obtainer.initialize(communicator.cAdapter);
+        obtainer.initialize(communicator.adapter);
         obtainer.start();
 
-        communicator.initialize(obtainer.oAdapter);
+        communicator.initialize();
+
+        FlashLight flashLight = new FlashLight();
+        flashLight.initialize(this);
+        flashLight.on();
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        flashLight.off();
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        flashLight.on();
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        flashLight.off();
+
+
+
+
+
+
+
 
     }
 
@@ -98,9 +139,12 @@ public class MainActivity extends AppCompatActivity {
         public void info(String string) {
             println(LogString.info(string));
         }
+        public void err(String string) { println(LogString.err(string));}
 
 
     }
+
+
 }
 
 

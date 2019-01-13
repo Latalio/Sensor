@@ -3,8 +3,8 @@ package com.la.sensor.obtainer;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
-import com.la.sensor.adapter.Adapter;
-import com.la.sensor.communicator.CAdapter;
+import com.la.sensor.adapter.NAdapter;
+import com.la.sensor.communicator.Communicator;
 import com.la.sensor.displayer.MainActivity;
 
 
@@ -13,19 +13,19 @@ public class Obtainer {
     private AccelerometerListener accelerometerListener;
     private MagneticFieldListener magneticFieldListener;
 
-    public OAdapter oAdapter = new OAdapter();
+
+    private NAdapter adapter;
 
     public Obtainer(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
     }
 
-    public void initialize(CAdapter cAdapter) {
+    public void initialize(NAdapter adapter) {
         accelerometerListener = new AccelerometerListener();
         magneticFieldListener = new MagneticFieldListener();
 
-        oAdapter.initialize(cAdapter);
-        oAdapter.start();
-        MainActivity.stateHandler.info("Obtainer here");
+        //连接Communicator
+        this.adapter = adapter;
     }
 
     public void register() {
@@ -47,13 +47,12 @@ public class Obtainer {
 
             @Override
             public void run() {
-                String info;
                 String infoAccelerometer;
                 String infoMagneticField;
 
                 try {
                     while (true) {
-                        if (oAdapter.getDataObtainTag() == 1) {
+                        if (adapter.dataSendTag == 1) {
                             infoAccelerometer = "Accelerometer:\n" +
                                     String.format("[x-%f], [y-%f], [z-%f]\n",
                                             accelerometerListener.getData_x(),
@@ -64,10 +63,11 @@ public class Obtainer {
                                             magneticFieldListener.getData_x(),
                                             magneticFieldListener.getData_y(),
                                             magneticFieldListener.getData_z());
-                            info = infoAccelerometer + infoMagneticField;
-                            MainActivity.infoHandler.printre(info);
+                            adapter.data = infoAccelerometer + infoMagneticField;
+
+                            MainActivity.infoHandler.printre(adapter.data);
                             Thread.sleep(100);
-                        } else if (oAdapter.getDataObtainTag() == 0) {
+                        } else if (adapter.dataSendTag == 0) {
 
                         } else {
                             System.out.println("Data Obtain Tag Error!");
@@ -79,4 +79,5 @@ public class Obtainer {
             }
         }).start();
     }
+
 }

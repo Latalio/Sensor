@@ -2,8 +2,6 @@ package com.la.sensor.communicator.protocol;
 
 import io.netty.buffer.ByteBuf;
 
-import com.la.sensor.adapter.packet.InsideCommandPacket;
-import com.la.sensor.adapter.packet.InsideMessagePacket;
 import com.la.sensor.communicator.protocol.request.*;
 import com.la.sensor.communicator.protocol.response.*;
 import com.la.sensor.communicator.serialize.Serializer;
@@ -35,9 +33,6 @@ public class PacketCodec {
         packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
         packetTypeMap.put(HEARTBEAT_REQUEST, HeartBeatRequestPacket.class);
         packetTypeMap.put(HEARTBEAT_RESPONSE, HeartBeatResponsePacket.class);
-
-        packetTypeMap.put(MESSAGE, InsideMessagePacket.class);
-        packetTypeMap.put(COMMAND, InsideCommandPacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new JSONSerializer();
